@@ -3,3 +3,6 @@ __pycache__/
 *.pyc
 venv/
 .venv/
+
+# is gelistirme notlari - musteriler gormemeli
+is-gelistirme/
