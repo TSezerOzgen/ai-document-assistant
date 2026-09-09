@@ -118,8 +118,7 @@ function bicimle(t){
   return t
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .replace(/
-/g,'<br>');
+    .replace(/\n/g,'<br>');
 }
 
 function balonEkle(kim, metin){
