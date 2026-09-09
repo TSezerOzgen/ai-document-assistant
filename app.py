@@ -214,4 +214,30 @@ if __name__ == "__main__":
     print("\n  Tarayicida ac:  http://127.0.0.1:8000")
     print("  Durdurmak icin: Ctrl + C\n")
 
+    # ---- ngrok tuneli (istege bagli) --------------------------------
+    # .env icinde NGROK_TOKEN varsa bilgisayarini internete acar, boylece
+    # Twilio WhatsApp mesajlarini buraya iletebilir. Yoksa sadece yerelde calisir.
+    ngrok_token = os.getenv("NGROK_TOKEN", "").strip()
+    if ngrok_token:
+        try:
+            from pyngrok import conf, ngrok
+            conf.get_default().auth_token = ngrok_token
+            adres = ngrok.connect(8000, "http").public_url.replace("http://", "https://")
+            print("  TUNEL ACILDI")
+            print(f"  Genel adres : {adres}")
+            print()
+            print("  >>> Twilio WhatsApp Sandbox ayarlarina SU ADRESI yapistir:")
+            print(f"      {adres}/whatsapp")
+            print("      (WHEN A MESSAGE COMES IN alanina, metodu POST birak)")
+            print("=" * 58)
+            print()
+        except Exception as hata:
+            print(f"  ! Tunel acilamadi: {hata}")
+            print("    .env icindeki NGROK_TOKEN dogru mu kontrol et.\n")
+    else:
+        print("  Tunel : kapali (.env icinde NGROK_TOKEN yok)")
+        print("          WhatsApp icin gerekli, web arayuzu icin gerekmiyor.")
+        print("=" * 58)
+        print()
+
     uvicorn.run(app, host="127.0.0.1", port=8000, log_level="warning")
