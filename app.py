@@ -114,6 +114,10 @@ app = FastAPI(title="AI Dokuman Asistani")
 from whatsapp import router as whatsapp_router
 app.include_router(whatsapp_router)
 
+# WhatsApp - Meta Cloud API (dogrudan WhatsApp, aracisiz)
+from meta_whatsapp import router as meta_router
+app.include_router(meta_router)
+
 
 class Istek(BaseModel):
     mesajlar: list
@@ -207,6 +211,9 @@ if __name__ == "__main__":
     print("=" * 58)
     print(f"  Model     : {MODEL}")
     print(f"  API       : {'baglandi' if ANAHTAR_VAR else 'ONIZLEME MODU - anahtar yok'}")
+    import meta_whatsapp, telegram_kanali
+    print(f"  WhatsApp  : {'hazir (Meta Cloud API)' if meta_whatsapp.HAZIR else 'kapali - META_TOKEN yok'}")
+    telegram_kanali.baslat() or print("  Telegram  : kapali - TELEGRAM_TOKEN yok")
     print(f"  Belgeler  : {len(belgeler):,} karakter yuklendi")
     if not belgeler.strip():
         print("  ! UYARI: belgeler/ klasoru bos. Icine .txt veya .pdf koy.")
