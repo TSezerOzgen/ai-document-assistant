@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI Asistan</title>
+<title>AI Assistant</title>
 <style>
   :root{
     --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --cizgi:#282d38;
@@ -75,8 +75,8 @@
   <header>
     <div class="avatar">&#129302;</div>
     <div>
-      <div class="baslik" id="isim">AI Asistan</div>
-      <div class="durum"><span class="nokta"></span> cevrimici &middot; 7/24</div>
+      <div class="baslik" id="isim">AI Assistant</div>
+      <div class="durum"><span class="nokta"></span> online &middot; 24/7</div>
     </div>
   </header>
 
@@ -86,10 +86,10 @@
 
   <footer>
     <div class="giris">
-      <input id="kutu" placeholder="Mesajinizi yazin..." autocomplete="off">
+      <input id="kutu" placeholder="Type your message..." autocomplete="off">
       <button id="gonder">&#10148;</button>
     </div>
-    <div class="maliyet" id="maliyet">Toplam: 0,00 kurus</div>
+    <div class="maliyet" id="maliyet">Running cost: $0.0000</div>
   </footer>
 </div>
 
@@ -99,9 +99,9 @@ const kutu = document.getElementById('kutu');
 const gonder = document.getElementById('gonder');
 const maliyetYazi = document.getElementById('maliyet');
 let gecmis = [];
-let toplamKurus = 0;
+let toplamUsd = 0;
 
-const ONERILER = ["Kacta aciksiniz?", "Fiyatlariniz nedir?", "Yarin randevu alabilir miyim?", "Neredesiniz?"];
+const ONERILER = ["What are your hours?", "How much is a cleaning?", "Do you take my insurance?", "Where are you located?"];
 
 fetch('/bilgi').then(r=>r.json()).then(b=>{
   document.getElementById('isim').textContent = b.isletme;
@@ -131,7 +131,7 @@ function balonEkle(kim, metin){
   return b;
 }
 
-balonEkle('bot','Merhaba! Size nasil yardimci olabilirim?');
+balonEkle('bot','Hi! How can I help you today?');
 
 async function sor(){
   const soru = kutu.value.trim();
@@ -179,8 +179,9 @@ async function sor(){
         }
         else if(p.tip === 'maliyet'){
           toplamKurus += p.kurus;
+          toplamUsd += p.usd;
           maliyetYazi.textContent =
-            `Bu soru: ${p.kurus.toFixed(2)} kurus  |  Toplam: ${toplamKurus.toFixed(2)} kurus  |  onbellek: ${p.onbellek_okundu} token`;
+            `This reply: $${p.usd.toFixed(4)}  |  Session total: $${toplamUsd.toFixed(4)}`;
         }
         else if(p.tip === 'hata'){
           if(!balon){ satir.innerHTML=''; balon=document.createElement('div'); balon.className='balon'; satir.appendChild(balon); }
