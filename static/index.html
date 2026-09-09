@@ -178,7 +178,6 @@ async function sor(){
           akis.scrollTop = akis.scrollHeight;
         }
         else if(p.tip === 'maliyet'){
-          toplamKurus += p.kurus;
           toplamUsd += p.usd;
           maliyetYazi.textContent =
             `This reply: $${p.usd.toFixed(4)}  |  Session total: $${toplamUsd.toFixed(4)}`;
