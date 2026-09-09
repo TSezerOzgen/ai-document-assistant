@@ -86,10 +86,16 @@ def cevap_uret(numara: str, soru: str) -> str:
     return cevap
 
 
-def twilio_ile_gonder(numara: str, mesaj: str) -> None:
-    """Cevabi Twilio API uzerinden WhatsApp'a yollar."""
+def twilio_ile_gonder(numara: str, mesaj: str, kimden: str = "") -> None:
+    """Cevabi Twilio API uzerinden WhatsApp'a yollar.
+
+    kimden: mesajin geldigi Twilio numarasi. Bos birakilirsa .env'deki
+    numara kullanilir. Boylece sandbox degisse bile ayar degistirmen gerekmez.
+    """
     adres = f"https://api.twilio.com/2010-04-01/Accounts/{TWILIO_SID}/Messages.json"
-    kimden = TWILIO_NUMARA if TWILIO_NUMARA.startswith("whatsapp:") else f"whatsapp:{TWILIO_NUMARA}"
+    kimden = kimden or TWILIO_NUMARA
+    if not kimden.startswith("whatsapp:"):
+        kimden = f"whatsapp:{kimden}"
     try:
         y = requests.post(
             adres,
@@ -105,15 +111,15 @@ def twilio_ile_gonder(numara: str, mesaj: str) -> None:
         print(f"  [twilio HATA] {hata}")
 
 
-def arka_planda_isle(numara: str, soru: str) -> None:
+def arka_planda_isle(numara: str, soru: str, kimden: str = "") -> None:
     """Cevabi uretip Twilio API ile yollar (webhook zaman asimina ugramasin diye)."""
     try:
         cevap = cevap_uret(numara, soru)
-        twilio_ile_gonder(numara, whatsapp_bicimi(cevap))
+        twilio_ile_gonder(numara, whatsapp_bicimi(cevap), kimden)
     except Exception as hata:
         print(f"  [whatsapp HATA] {hata}")
         KONUSMALAR.get(numara, []) and KONUSMALAR[numara].pop()
-        twilio_ile_gonder(numara, "Sorry, I can't answer right now. Please try again shortly.")
+        twilio_ile_gonder(numara, "Sorry, I can't answer right now. Please try again shortly.", kimden)
 
 
 @router.post("/whatsapp")
@@ -121,6 +127,7 @@ async def whatsapp_mesaji(
     arka: BackgroundTasks,
     Body: str = Form(default=""),
     From: str = Form(default=""),
+    To: str = Form(default=""),
 ):
     from app import ANAHTAR_VAR
 
@@ -141,7 +148,7 @@ async def whatsapp_mesaji(
     if API_MODU:
         # Cevabi arka planda uret ve Twilio API ile yolla.
         # Webhook'a hemen bos cevap donuyoruz ki Twilio beklemesin.
-        arka.add_task(arka_planda_isle, numara, soru)
+        arka.add_task(arka_planda_isle, numara, soru, To)
         return twiml()
 
     # Yedek yol: Twilio bilgileri yoksa cevabi XML olarak don
