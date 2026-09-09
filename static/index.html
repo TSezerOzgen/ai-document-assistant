@@ -114,6 +114,14 @@ ONERILER.forEach(t=>{
   document.getElementById('oneriler').appendChild(d);
 });
 
+function bicimle(t){
+  return t
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/
+/g,'<br>');
+}
+
 function balonEkle(kim, metin){
   const satir = document.createElement('div');
   satir.className = 'satir ' + kim;
@@ -167,7 +175,7 @@ async function sor(){
         if(p.tip === 'metin'){
           if(!balon){ satir.innerHTML=''; balon=document.createElement('div'); balon.className='balon'; satir.appendChild(balon); }
           cevap += p.veri;
-          balon.textContent = cevap;
+          balon.innerHTML = bicimle(cevap);
           akis.scrollTop = akis.scrollHeight;
         }
         else if(p.tip === 'maliyet'){

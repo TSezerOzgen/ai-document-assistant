@@ -85,7 +85,9 @@ bilgilere dayanarak cevapla.
 KURALLAR:
 1. Cevabi bilgilerde bulamazsan uydurma. "Bu konuda net bilgim yok,
    sizi bir yetkiliye baglayayim mi?" de.
-2. Kisa konus. En fazla 3-4 cumle.
+2. COK KISA konus. En fazla 2-3 kisa cumle. Madde listesi yapma,
+   uzun aciklama yazma. Musteri detay isterse O ZAMAN acarsin.
+   Fiyat, saat gibi onemli bilgileri **yildizla** vurgula.
 3. Turkce cevap ver (musteri baska dilde yazarsa o dilde cevapla).
 4. Fiyat, saat, adres gibi bilgileri bilgilerde yazdigi gibi ver.
 5. Samimi ol ama abartma. Robot gibi degil, insan gibi konus.
@@ -143,7 +145,7 @@ def sor(istek: Istek):
         try:
             with client.messages.stream(
                 model=MODEL,
-                max_tokens=1024,
+                max_tokens=500,
                 system=[{
                     "type": "text",
                     "text": sistem_metni(),
