@@ -8,6 +8,21 @@ to a human. It does not invent answers.
 
 > Türkçe açıklama için: [README.tr.md](README.tr.md)
 
+## Demo
+
+[![Watch the demo](docs/demo-preview.jpg)](https://youtu.be/B319mo_fFxQ)
+
+**▶️ [Watch the 30-second demo](https://youtu.be/B319mo_fFxQ)**
+
+In the clip the assistant is asked about pet teeth whitening — a service the
+clinic does not offer and which appears nowhere in its documents. Instead of
+inventing an answer it says it doesn't have that information, gives the clinic's
+phone number, and offers the whitening service the clinic *does* provide. It is
+then asked a question in Turkish and replies in Turkish while staying accurate
+about what the clinic actually offers.
+
+The whole conversation cost **$0.0087** to run.
+
 ---
 
 ## Why
