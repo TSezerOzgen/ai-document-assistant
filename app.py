@@ -110,6 +110,10 @@ ANAHTAR_VAR = anahtar.startswith("sk-ant-")
 client = Anthropic(api_key=anahtar) if ANAHTAR_VAR else None
 app = FastAPI(title="AI Dokuman Asistani")
 
+# WhatsApp kanalini bagla - ayni beyni kullanir, sadece yeni bir giris kapisi
+from whatsapp import router as whatsapp_router
+app.include_router(whatsapp_router)
+
 
 class Istek(BaseModel):
     mesajlar: list
