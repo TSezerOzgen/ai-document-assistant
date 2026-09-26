@@ -1,0 +1,31 @@
+# WhatsApp (ve istenirse Telegram) MUSTERI botu - Render Blueprint KALIBI (26 Eylul 2026)
+# Kullanim: bu dosyayi musteri reposunun kokune "render.yaml" adiyla koy, Render > New > Blueprint.
+# Plan "starter" = her zaman acik ($7/ay). "free" 15 dk sonra uyur -> Meta webhook'lari gecikir/tekrarlanir, KULLANMA.
+services:
+  - name: whatsapp-bot-MUSTERI
+    type: web
+    runtime: python
+    plan: starter
+    region: frankfurt
+    buildCommand: pip install -r requirements.txt
+    # python app.py: WhatsApp webhook'u + Telegram dinleyicisini birlikte baslatir (uvicorn app:app Telegram'i baslatmaz).
+    startCommand: python app.py
+    healthCheckPath: /bilgi
+    autoDeployTrigger: "off"
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: ISLETME_ADI
+        value: "MUSTERI ADI"
+      - key: BELGE_KLASORU
+        value: belgeler
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: META_TOKEN          # Sistem kullanicisi (kalici) anahtari
+        sync: false
+      - key: META_PHONE_ID
+        sync: false
+      - key: META_VERIFY_TOKEN   # kendimiz uyduruyoruz, Meta webhook ekranina ayni yazilir
+        sync: false
+      - key: TELEGRAM_TOKEN      # istege bagli
+        sync: false

@@ -99,8 +99,17 @@ async def gelen_mesaj(request: Request, arka: BackgroundTasks):
             for degisim in giris.get("changes", []):
                 deger = degisim.get("value", {})
                 for mesaj in deger.get("messages", []):
-                    if mesaj.get("type") != "text":
-                        _gonder(mesaj["from"], "I can only read text messages right now.")
+                    tip = mesaj.get("type")
+                    # Tepki (kalp, bas parmak) ve sistem olaylari sessizce gecilir,
+                    # yoksa emoji atan musteriye bot gereksiz cevap yaziyor.
+                    if tip in ("reaction", "system", "unsupported"):
+                        continue
+                    if tip != "text":
+                        _gonder(
+                            mesaj["from"],
+                            "I can read text messages only. "
+                            "Please type your question and I'll answer right away.",
+                        )
                         continue
                     numara = mesaj["from"]
                     soru = mesaj["text"]["body"].strip()

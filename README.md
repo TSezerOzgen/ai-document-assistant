@@ -47,7 +47,7 @@ only what the business actually told it.
   escalates to a human when the answer isn't there
 - **Streaming responses** — token-by-token, so it feels real-time
 - **Prompt caching** — the document set is cached, cutting input cost by
-  up to ~90% on larger document sets
+  up to ~90%, but only on document sets above the model's cache minimum (2,048 tokens on Haiku 4.5)
 - **Live cost tracking** — every reply reports its token usage and cost
 - **Preview mode** — the UI runs without an API key, so you can demo the
   interface before wiring up a model
@@ -111,9 +111,13 @@ User messages = full conversation history
 
 ## Cost
 
-With Claude Haiku 4.5 and a ~750-token document set, a question costs
-roughly **$0.0018**. Larger document sets benefit from prompt caching,
-where cached input reads bill at 10% of the base input rate.
+Measured with Claude Haiku 4.5 and a ~1,200-token document set: a question
+costs about **$0.0015**, so 1,000 questions run to roughly $1.50.
+
+Prompt caching only helps above Haiku 4.5's 2,048-token minimum. Below it
+`cache_control` is accepted but never hits, and every question pays the full
+input price — that is why a small document set costs what it costs. Above the
+minimum, cached input reads bill at 10% of the base input rate.
 
 ---
 

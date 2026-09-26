@@ -9,7 +9,14 @@ Calistirmak icin:  python app.py
 
 import json
 import os
+import sys
 from pathlib import Path
+
+# sunucu.log'a yazilanlar hemen gorunsun (yoksa print'ler tampon'da bekliyor).
+# UTF-8 sart: Windows varsayilani (cp1252) emoji ve s/g/i gibi harfleri yazamayinca
+# print cokuyor, bot da musteriye "Sorry, I can't answer" diyordu (19 Eylul'de yakalandi).
+sys.stdout.reconfigure(encoding="utf-8", errors="replace", line_buffering=True)
+sys.stderr.reconfigure(encoding="utf-8", errors="replace", line_buffering=True)
 
 from anthropic import Anthropic
 from dotenv import load_dotenv
@@ -23,12 +30,13 @@ load_dotenv()
 #  AYARLAR  -  burayi degistirerek asistani her isletmeye uyarlarsin
 # =====================================================================
 
-ISLETME_ADI = "Riverside Dental Care"
+# Sunucuda ortam degiskenleriyle (Render "Environment") her musteriye ayarlanir; yoksa ornek klinik.
+ISLETME_ADI = os.getenv("ISLETME_ADI", "Riverside Dental Care")
 
-KARAKTER = "a warm, concise front-desk receptionist"
+KARAKTER = os.getenv("KARAKTER", "a warm, concise front-desk receptionist")
 
 # Musterinin yazdigi dilde cevap verir; hangi dili varsayacagini burasi belirler
-VARSAYILAN_DIL = "English"
+VARSAYILAN_DIL = os.getenv("VARSAYILAN_DIL", "English")
 
 MODEL = "claude-haiku-4-5"
 # Daha akilli (ve pahali) secenekler - satiri degistirmen yeterli:
@@ -46,7 +54,7 @@ FIYATLAR = {
 
 
 KOK = Path(__file__).parent
-BELGE_KLASORU = KOK / "belgeler"
+BELGE_KLASORU = KOK / os.getenv("BELGE_KLASORU", "belgeler")  # musteri basina: belgeler-<musteri>
 
 
 def belgeleri_oku() -> str:
@@ -96,6 +104,24 @@ RULES:
 4. Quote prices, hours and addresses exactly as written below.
 5. Highlight key facts like prices and hours with **double asterisks**.
 6. Sound like a helpful person, not a robot. Warm, never pushy.
+7. Health and safety: you are not a doctor, dentist or lawyer. Never diagnose,
+   never guess what a symptom might be, what could cause it or what treatment
+   someone might need,
+   and never suggest a medicine, dose, rinse, home remedy or other self-care
+   step, not even "in the meantime". For pain or symptoms, say a professional
+   needs to see them and give the booking or emergency details from the
+   information. Do not name or describe the symptom back to them in medical
+   terms (no "sensitivity can have different causes"). Example: "What
+   painkiller should I take for my tooth?" -> "I can't advise on medicine, but
+   the dentist needs to see you. [booking or emergency details]"
+8. Possible emergency (difficulty breathing or swallowing, severe swelling of
+   the face or neck, bleeding that will not stop, chest pain, a head injury):
+   first tell them to call emergency services or go to the nearest emergency
+   department now, using the emergency number in the information if it lists
+   one. Never tell them to wait for an appointment. Give this only when they
+   describe such an emergency, never as an "if you have..." extra.
+9. Never promise an appointment, a time slot, a result or relief. Share the
+   booking details and let the team confirm.
 
 ===== BUSINESS INFORMATION =====
 {belgeler}
@@ -117,6 +143,14 @@ app.include_router(whatsapp_router)
 # WhatsApp - Meta Cloud API (dogrudan WhatsApp, aracisiz)
 from meta_whatsapp import router as meta_router
 app.include_router(meta_router)
+
+# Shopify - magaza sitesine gomulen sohbet balonu (demo)
+from shopify_demo import router as shopify_router
+app.include_router(shopify_router)
+
+# Airbnb / tatil evi - misafirin actigi dijital ev rehberi (demo)
+from airbnb_demo import router as airbnb_router
+app.include_router(airbnb_router)
 
 
 class Istek(BaseModel):
@@ -247,4 +281,5 @@ if __name__ == "__main__":
         print("=" * 58)
         print()
 
-    uvicorn.run(app, host="127.0.0.1", port=8000, log_level="warning")
+    # Evde: 127.0.0.1:8000. Sunucuda (Render vb.): HOST=0.0.0.0 ve platformun verdigi PORT.
+    uvicorn.run(app, host=os.getenv("HOST", "127.0.0.1"), port=int(os.getenv("PORT", "8000")), log_level="warning")

@@ -6,3 +6,12 @@ venv/
 
 # is gelistirme notlari - musteriler gormemeli
 is-gelistirme/
+
+# bu bilgisayara ozel baslatma dosyalari ve kayitlar
+sunucu.log
+baslat.bat
+durdur.bat
+gizli-baslat.vbs
+
+# yerel yedekler
+*.bak*
